@@ -1,8 +1,71 @@
-/*
+.pdf-upload-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	padding: 20px;
+	border-radius: 10px;
+	width: 100%;
+	max-width: 400px;
+	margin: 0 auto;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.pdf-upload-title {
+	font-size: 1.8rem;
+	font-weight: 700;
+	text-align: center;
+	margin-bottom: 12px;
+	color: white;
+}
 
-If your plugin does not need CSS, delete this file.
+.pdf-upload-label {
+	font-size: 1rem;
+	color: #007bff;
+	cursor: pointer;
+	padding: 10px 16px;
+	background: white;
+	border: 2px dashed #007bff;
+	border-radius: 6px;
+	transition: all 0.3s ease-in-out;
+	text-align: center;
+	width: 100%;
+	max-width: 300px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 
-*/
+.pdf-upload-label:hover,
+.pdf-upload-label:focus {
+	background: #e3f2fd;
+	border-color: #0056b3;
+	color: #0056b3;
+}
+
+.pdf-upload-input {
+	display: none;
+}
+
+.pdf-upload-button {
+	background: linear-gradient(135deg, #007bff, #0056b3);
+	color: white;
+	border: none;
+	padding: 10px 16px;
+	font-size: 1rem;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: transform 0.2s ease-in-out, background 0.3s ease-in-out;
+	width: 100%;
+	max-width: 200px;
+	text-align: center;
+	box-shadow: 0 3px 6px rgba(0, 123, 255, 0.3);
+}
+
+.pdf-upload-button:hover {
+	background: linear-gradient(135deg, #0056b3, #003d82);
+	transform: translateY(-2px);
+}
+
+.pdf-upload-button:active {
+	transform: translateY(1px);
+}
