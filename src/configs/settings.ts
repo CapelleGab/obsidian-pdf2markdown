@@ -6,7 +6,7 @@ export interface PDFtoMDSettings {
 }
 
 export const DEFAULT_SETTINGS: PDFtoMDSettings = {
-	defaultFolder: "/Templates/",
+	defaultFolder: "/Conversions/",
 };
 
 export class PDFtoMDSettingTab extends PluginSettingTab {
