@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@mistralai/mistralai": "^1.5.1",
 		"dotenv": "^16.4.7",
+		"electron": "^35.0.2",
 		"fs": "^0.0.1-security"
 	}
 }

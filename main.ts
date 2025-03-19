@@ -21,7 +21,7 @@ export default class PDFtoMD extends Plugin {
 			"arrow-right-left",
 			"PDF to Markdown",
 			(evt: MouseEvent) => {
-				new pdfToMdModal(this.app).open();
+				new pdfToMdModal(this.app, this).open();
 			}
 		);
 
@@ -31,7 +31,7 @@ export default class PDFtoMD extends Plugin {
 			id: "pdf-to-md",
 			name: "PDF To Markdown",
 			callback: () => {
-				new pdfToMdModal(this.app).open();
+				new pdfToMdModal(this.app, this).open();
 			},
 		});
 
