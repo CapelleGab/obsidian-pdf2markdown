@@ -3,10 +3,12 @@ import PDFtoMD from "../../main";
 
 export interface PDFtoMDSettings {
 	defaultFolder: string;
+	apiKey: string;
 }
 
 export const DEFAULT_SETTINGS: PDFtoMDSettings = {
 	defaultFolder: "/Conversions/",
+	apiKey: "",
 };
 
 export class PDFtoMDSettingTab extends PluginSettingTab {
@@ -35,5 +37,16 @@ export class PDFtoMDSettingTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+		new Setting(containerEl)
+			.setName("Mistral API KEY")
+			.setDesc("Go to Mistral LA PLATFORME to get you're API KEY")
+			.addText((text) => {
+				text.setPlaceholder("API KEY")
+					.setValue(this.plugin.settings.apiKey)
+					.onChange(async (value) => {
+						this.plugin.settings.apiKey = value;
+						await this.plugin.saveSettings();
+					});
+			});
 	}
 }
