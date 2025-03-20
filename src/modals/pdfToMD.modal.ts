@@ -5,6 +5,7 @@ import {
 	getSignedUrl,
 	uploadPDFtoMistral,
 } from "../utils/ocrRequest";
+import { addApiKey } from "./addApiKey.modal";
 
 export class pdfToMdModal extends Modal {
 	private plugin: PDFtoMD;
@@ -12,8 +13,14 @@ export class pdfToMdModal extends Modal {
 		super(app);
 		this.plugin = plugin;
 	}
+
 	async onOpen() {
 		const { contentEl } = this;
+
+		if (this.plugin.settings.apiKey === "") {
+			new addApiKey(this.app, this.plugin).open();
+			this.close();
+		}
 
 		contentEl.createEl("h2", {
 			text: "PDF To Markdown",
@@ -91,6 +98,8 @@ export class pdfToMdModal extends Modal {
 			try {
 				const jsonContent = await this.getJsonFromPDF(file);
 
+				console.log(jsonContent);
+
 				let pageContent = "";
 				jsonContent.pages.forEach((page) => {
 					pageContent += `${page.markdown} `;
@@ -117,6 +126,7 @@ export class pdfToMdModal extends Modal {
 					properties: ["openDirectory"],
 				})
 				.then((result: any) => {
+					console.log(typeof result);
 					if (result.canceled) {
 						resolve(null);
 					} else {
@@ -170,13 +180,14 @@ export class pdfToMdModal extends Modal {
 		}
 	}
 
-	onClose() {
-		const { contentEl } = this;
-		contentEl.empty();
-	}
 	async getJsonFromPDF(file: File) {
 		const uploadedPdf = await uploadPDFtoMistral(file);
 		const signedUrl = await getSignedUrl(uploadedPdf);
 		return await getJsonFromSignedUrl(signedUrl);
+	}
+
+	onClose() {
+		const { contentEl } = this;
+		contentEl.empty();
 	}
 }
