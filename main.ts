@@ -25,8 +25,6 @@ export default class PDFtoMD extends Plugin {
 			}
 		);
 
-		new Notice("PDF To MD - Loaded");
-
 		this.addCommand({
 			id: "pdf-to-md",
 			name: "PDF To Markdown",

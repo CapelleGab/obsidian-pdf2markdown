@@ -4,11 +4,12 @@ import {
 	getJsonFromSignedUrl,
 	getSignedUrl,
 	uploadPDFtoMistral,
-} from "../utils/ocrRequest";
+} from "../utils/ocrRequests.utils";
 import { addApiKey } from "./addApiKey.modal";
 
 export class pdfToMdModal extends Modal {
 	private plugin: PDFtoMD;
+
 	constructor(app: App, plugin: PDFtoMD) {
 		super(app);
 		this.plugin = plugin;
@@ -86,32 +87,51 @@ export class pdfToMdModal extends Modal {
 		submitButton.addEventListener("click", async () => {
 			const file = fileInput.files?.[0];
 			const folderPath = folderInput.value;
+
 			if (!file) {
 				new Notice("Veuillez sélectionner un fichier PDF.");
 				return;
 			}
+
 			if (!folderPath) {
 				new Notice("Veuillez entrer un dossier de destination.");
 				return;
 			}
 
 			try {
-				const jsonContent = await this.getJsonFromPDF(file);
-
-				console.log(jsonContent);
+				const jsonContent = await this.getJSON(file);
 
 				let pageContent = "";
+				const images: string[] = [];
+
 				jsonContent.pages.forEach((page) => {
-					pageContent += `${page.markdown} `;
+					if (page.markdown) {
+						pageContent += `${page.markdown} `;
+					}
+
+					if (page.images) {
+						page.images.forEach((image) => {
+							if (image.imageBase64) {
+								images.push(image.imageBase64);
+							}
+						});
+					}
 				});
 
-				await this.createMarkdownFile(pageContent, file, folderPath);
+				await this.createMarkdownFile(
+					pageContent,
+					file,
+					folderPath,
+					images
+				);
+
 				new Notice("Conversion réussie !");
 				this.close();
 			} catch (error) {
-				console.error("Erreur lors de la conversion :", error);
 				new Notice(
-					`La conversion a échoué. Détails de l'erreur : ${error}`
+					`La conversion a échoué. Détails de l'erreur : ${
+						error instanceof Error ? error.message : error
+					}`
 				);
 			}
 		});
@@ -126,7 +146,6 @@ export class pdfToMdModal extends Modal {
 					properties: ["openDirectory"],
 				})
 				.then((result: any) => {
-					console.log(typeof result);
 					if (result.canceled) {
 						resolve(null);
 					} else {
@@ -134,53 +153,68 @@ export class pdfToMdModal extends Modal {
 					}
 				})
 				.catch((err: Error) => {
-					console.error(
-						"Erreur lors de l'ouverture du dialogue :",
-						err
-					);
 					resolve(null);
 				});
 		});
 	}
 
-	async createMarkdownFile(content: string, file: File, folderPath: string) {
-		const fileName = `${file.name.replace(/\.pdf$/, "")}.md`;
+	async createMarkdownFile(
+		content: string,
+		file: File,
+		folderPath: string,
+		images: string[]
+	) {
+		const fileName = file.name.replace(/\.pdf$/, "");
+		const markdownFileName = `${fileName}.md`;
 		const vaultRoot = this.app.vault.adapter.basePath;
 		const relativeFolderPath = folderPath
 			.replace(vaultRoot, "")
 			.replace(/^\/+/, "");
-		const fullPath = relativeFolderPath + "/" + fileName;
-		const folderExists = await this.app.vault.adapter.exists(
-			relativeFolderPath
-		);
 
-		if (!folderExists) {
-			// Si le dossier n'existe pas, on l'ajoute au dossier par défaut en setting
+		const newFolderPath = relativeFolderPath
+			? `${relativeFolderPath}${fileName}`
+			: fileName;
+
+		if (!(await this.app.vault.adapter.exists(newFolderPath))) {
 			try {
-				await this.app.vault.createFolder(relativeFolderPath);
+				await this.app.vault.createFolder(newFolderPath);
 			} catch (error) {
-				console.error("Erreur lors de la création du dossier :", error);
 				new Notice(`Erreur lors de la création du dossier : ${error}`);
 				return;
 			}
 		}
 
+		const fullPath = `${newFolderPath}/${markdownFileName}`;
 		try {
-			// Créer le fichier Markdown
-			const createdFile = await this.app.vault.create(fullPath, content);
-			this.app.workspace.openLinkText(createdFile.path, "", true);
+			if (images && images.length > 0) {
+				for (let i = 0; i < images.length; i++) {
+					const image = images[i];
+					const imageFileName = `img-${i}.jpeg`;
+					const imagePath = `${newFolderPath}/${imageFileName}`;
+					try {
+						const base64Data = image.split(",")[1];
+						const imageBuffer = Buffer.from(base64Data, "base64");
+						await this.app.vault.adapter.writeBinary(
+							imagePath,
+							imageBuffer
+						);
+					} catch (error) {
+						new Notice(
+							`Erreur lors de la création de l'image : ${error}`
+						);
+					}
+				}
+			}
+
+			await this.app.vault.create(fullPath, content);
 		} catch (error) {
-			console.error(
-				"Erreur lors de la création du fichier Markdown :",
-				error
-			);
 			new Notice(
-				`Erreur lors de la création du fichier. Détails : ${error}`
+				`Erreur lors de la création du fichier Markdown : ${error}`
 			);
 		}
 	}
 
-	async getJsonFromPDF(file: File) {
+	async getJSON(file: File) {
 		const uploadedPdf = await uploadPDFtoMistral(file);
 		const signedUrl = await getSignedUrl(uploadedPdf);
 		return await getJsonFromSignedUrl(signedUrl);
