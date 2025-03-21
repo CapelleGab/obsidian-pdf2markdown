@@ -1,11 +1,11 @@
 {
 	"id": "pdf-to-md",
 	"name": "PDF to MD",
-	"version": "1.0.0",
+	"version": "1.2.0",
 	"minAppVersion": "0.15.0",
 	"description": "Convert PDF to Markdown.",
 	"author": "CAPELLE Gabin",
-	"authorUrl": "https://obsidian.md",
+	"authorUrl": "https://github.com/CapelleGab",
 	"fundingUrl": "https://obsidian.md/pricing",
 	"isDesktopOnly": false
 }
