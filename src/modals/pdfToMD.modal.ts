@@ -34,7 +34,8 @@ export class pdfToMdModal extends Modal {
 			cls: "pdf-input-container",
 		});
 
-		const pdfInput = inputContainer.createEl("input", {
+		// PDF SELECTOR
+		const pdfInputLabel = inputContainer.createEl("input", {
 			attr: {
 				type: "text",
 				id: "pdf-upload",
@@ -43,39 +44,53 @@ export class pdfToMdModal extends Modal {
 			},
 			cls: "pdf-upload-input",
 		});
-
-		const fileInput = inputContainer.createEl("input", {
+		const pdfSelectorInput = inputContainer.createEl("input", {
 			attr: {
 				type: "file",
 				accept: "application/pdf",
 				hidden: "true",
 			},
 		});
+		pdfInputLabel.addEventListener("click", () => pdfSelectorInput.click());
 
-		const folderInput = inputContainer.createEl("input", {
+		// Destination Folder Selector
+		const destinationFolderSelectorInput = inputContainer.createEl("input", {
+			attr: {
+				type: "file",
+				id: "folder-picker",
+				webkitdirectory: "true",
+				multiple: "true",
+				hidden: "true",
+			},
+		});
+
+		const destinationFolderInputLabel = inputContainer.createEl("input", {
 			attr: {
 				type: "text",
 				id: "folder-upload",
 				value: this.plugin.settings.defaultFolder,
-				placeholder: this.plugin.settings.defaultFolder,
+				placeholder: "Sélectionnez un dossier",
 				readonly: "true",
 			},
 			cls: "folder-upload-input",
 		});
+		destinationFolderInputLabel.addEventListener("click", () => {
+			destinationFolderSelectorInput.click();
+		});
 
-		pdfInput.addEventListener("click", () => fileInput.click());
-
-		fileInput.addEventListener("change", (event) => {
+		pdfSelectorInput.addEventListener("change", (event) => {
 			const file = (event.target as HTMLInputElement).files?.[0];
 			if (file) {
-				pdfInput.value = file.name;
+				pdfInputLabel.value = file.name;
 			}
 		});
 
-		folderInput.addEventListener("click", async () => {
-			const folderPath = await this.openFolderDialog();
-			if (folderPath) {
-				folderInput.value = folderPath;
+		destinationFolderSelectorInput.addEventListener("change", (event) => {
+			const files = (event.target as HTMLInputElement).files;
+			if (files && files.length > 0) {
+				const firstFile = files[0].webkitRelativePath;
+				const folderPath = firstFile.split("/")[0];
+				destinationFolderInputLabel.value = `/${folderPath}/`;
 			}
 		});
 
@@ -85,14 +100,13 @@ export class pdfToMdModal extends Modal {
 		});
 
 		submitButton.addEventListener("click", async () => {
-			const file = fileInput.files?.[0];
-			const folderPath = folderInput.value;
+			const file = pdfSelectorInput.files?.[0];
+			const folderPath = destinationFolderInputLabel.value;
 
 			if (!file) {
 				new Notice("Veuillez sélectionner un fichier PDF.");
 				return;
 			}
-
 			if (!folderPath) {
 				new Notice("Veuillez entrer un dossier de destination.");
 				return;
@@ -118,12 +132,7 @@ export class pdfToMdModal extends Modal {
 					}
 				});
 
-				await this.createMarkdownFile(
-					pageContent,
-					file,
-					folderPath,
-					images
-				);
+				await this.createMarkdownFile(pageContent, file, folderPath, images);
 
 				new Notice("Conversion réussie !");
 				this.close();
@@ -134,27 +143,6 @@ export class pdfToMdModal extends Modal {
 					}`
 				);
 			}
-		});
-	}
-
-	async openFolderDialog(): Promise<string | null> {
-		return new Promise((resolve) => {
-			const dialog = window.require("electron").remote.dialog;
-
-			dialog
-				.showOpenDialog({
-					properties: ["openDirectory"],
-				})
-				.then((result: any) => {
-					if (result.canceled) {
-						resolve(null);
-					} else {
-						resolve(result.filePaths[0]);
-					}
-				})
-				.catch((err: Error) => {
-					resolve(null);
-				});
 		});
 	}
 
@@ -194,23 +182,16 @@ export class pdfToMdModal extends Modal {
 					try {
 						const base64Data = image.split(",")[1];
 						const imageBuffer = Buffer.from(base64Data, "base64");
-						await this.app.vault.adapter.writeBinary(
-							imagePath,
-							imageBuffer
-						);
+						await this.app.vault.adapter.writeBinary(imagePath, imageBuffer);
 					} catch (error) {
-						new Notice(
-							`Erreur lors de la création de l'image : ${error}`
-						);
+						new Notice(`Erreur lors de la création de l'image : ${error}`);
 					}
 				}
 			}
 
 			await this.app.vault.create(fullPath, content);
 		} catch (error) {
-			new Notice(
-				`Erreur lors de la création du fichier Markdown : ${error}`
-			);
+			new Notice(`Erreur lors de la création du fichier Markdown : ${error}`);
 		}
 	}
 
