@@ -2,36 +2,36 @@
 
 ## Description
 
-Le **PDF to Markdown Plugin** est un plugin pour [Obsidian](https://obsidian.md/) qui permet de convertir des fichiers PDF en fichiers Markdown en utilisant la technologie OCR de Mistral. Ce plugin permet de transformer facilement des fichiers PDF en Markdown tout en conservant leur contenu.
+The **PDF to Markdown Plugin** is a plugin for [Obsidian](https://obsidian.md/) that converts PDF files into Markdown files using Mistral's OCR technology. This plugin makes it easy to transform PDF files into Markdown while preserving their content.
 
 ## Fonctionnalités
 
--   Conversion rapide de PDF en Markdown.
--   Utilisation de **Mistral OCR** pour extraire le texte des fichiers PDF.
--   Interface simple et intuitive intégrée dans Obsidian.
+- Fast PDF to Markdown conversion.
+- Use **Mistral OCR** to extract text from PDF files.
+- Simple, intuitive interface integrated into Obsidian.
 
 ## Installation
 
-1. Téléchargez et installez le plugin depuis les **Plugins communautaires** dans Obsidian.
-2. Activez le plugin.
-3. Allez sur [La Plateforme](https://console.mistral.ai/), pour par la suite créer une clé api
+1. Download and install the plugin from **Community plugins** in Obsidian.
+2. Activate the plugin.
+3. Go to [The Platform](https://console.mistral.ai/), then create an api key.
 
 ## Utilisation
 
-1. Ouvrez la commande palette dans Obsidian (Cmd/Ctrl + P) Ou avec l'icon sur le rubban.
-2. Sélectionnez **PDF To MD**.
-3. Choisissez votre fichier PDF et le dossier de destination.
-4. Le fichier Markdown sera créé et sauvegardé.
+1. Open the palette command in Obsidian (Cmd/Ctrl + P) or with the icon on the rubban.
+2. Select **PDF To MD**.
+3. Choose your PDF file and destination folder.
+4. The Markdown file will be created and saved.
 
 ## Développement
 
-1. Clonez le repository :  
+1. Clone this repository :  
    `git clone git@github.com:CapelleGab/PDF2Markdown.git`
-2. Installez les dépendances :  
+2. Install dependencies :  
    `npm install`
-3. Compilez et lancez Obsidian avec le plugin localement :  
+3. Compile and launch Obsidian with the plugin locally:  
    `npm run dev`
 
 ## License
 
-Licence MIT. Consultez le fichier [LICENSE](LICENSE) pour plus d'informations.
+MIT license. See the [LICENSE](LICENSE) file for more information.
