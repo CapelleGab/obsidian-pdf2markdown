@@ -1,4 +1,3 @@
-import * as dotenv from "dotenv";
 import { Notice, Plugin } from "obsidian";
 import {
 	DEFAULT_SETTINGS,
@@ -6,8 +5,6 @@ import {
 	PDFtoMDSettingTab,
 } from "src/configs/settings";
 import { pdfToMdModal } from "src/modals/pdfToMD.modal";
-
-dotenv.config({ path: "src/configs/.env" });
 
 export default class PDFtoMD extends Plugin {
 	settings: PDFtoMDSettings;
