@@ -1,5 +1,7 @@
 # PDF to Markdown Plugin for Obsidian
 
+> **WARNING : Still in early development**
+
 ## Description
 
 The **PDF to Markdown Plugin** is a plugin for [Obsidian](https://obsidian.md/) that converts PDF files into Markdown files using Mistral's OCR technology. This plugin makes it easy to transform PDF files into Markdown while preserving their content.
