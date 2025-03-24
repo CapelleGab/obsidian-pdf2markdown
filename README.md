@@ -9,16 +9,16 @@ Le **PDF to Markdown Plugin** est un plugin pour [Obsidian](https://obsidian.md/
 -   Conversion rapide de PDF en Markdown.
 -   Utilisation de **Mistral OCR** pour extraire le texte des fichiers PDF.
 -   Interface simple et intuitive intégrée dans Obsidian.
--   Parametrage du fichier de sortie par défaut.
 
 ## Installation
 
 1. Téléchargez et installez le plugin depuis les **Plugins communautaires** dans Obsidian.
 2. Activez le plugin.
+3. Allez sur [La Plateforme](https://console.mistral.ai/), pour par la suite créer une clé api
 
 ## Utilisation
 
-1. Ouvrez la commande palette dans Obsidian (Cmd/Ctrl + P).
+1. Ouvrez la commande palette dans Obsidian (Cmd/Ctrl + P) Ou avec l'icon sur le rubban.
 2. Sélectionnez **PDF To MD**.
 3. Choisissez votre fichier PDF et le dossier de destination.
 4. Le fichier Markdown sera créé et sauvegardé.
