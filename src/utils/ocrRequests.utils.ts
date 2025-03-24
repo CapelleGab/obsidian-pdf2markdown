@@ -3,8 +3,11 @@ import {
 	FileSignedURL,
 	UploadFileOut,
 } from "@mistralai/mistralai/models/components";
+import data from "data.json";
 
-const apiKey = "hRf3KcdkFoHXoOQyaSjMxFbb3iztuuv0";
+
+
+const apiKey = data.apiKey
 const client = new Mistral({ apiKey: apiKey });
 
 export const uploadPDFtoMistral = async (file: File) => {
