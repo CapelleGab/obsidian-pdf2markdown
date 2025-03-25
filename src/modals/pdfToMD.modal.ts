@@ -1,10 +1,6 @@
 import PDFtoMD from "main";
 import { App, Modal, Notice } from "obsidian";
-import {
-	getJsonFromSignedUrl,
-	getSignedUrl,
-	uploadPDFtoMistral,
-} from "../utils/ocrRequests.utils";
+import { buildPDFToMardown } from "src/utils/ocrRequests.utils";
 import { addApiKey } from "./addApiKey.modal";
 
 export class pdfToMdModal extends Modal {
@@ -115,6 +111,8 @@ export class pdfToMdModal extends Modal {
 			try {
 				const jsonContent = await this.getJSON(file);
 
+				console.log("JSON CONTENT GOOD");
+
 				let pageContent = "";
 				const images: string[] = [];
 
@@ -196,9 +194,7 @@ export class pdfToMdModal extends Modal {
 	}
 
 	async getJSON(file: File) {
-		const uploadedPdf = await uploadPDFtoMistral(file);
-		const signedUrl = await getSignedUrl(uploadedPdf);
-		return await getJsonFromSignedUrl(signedUrl);
+		return await buildPDFToMardown(file, this.plugin.settings.apiKey);
 	}
 
 	onClose() {
