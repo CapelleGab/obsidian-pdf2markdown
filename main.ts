@@ -16,15 +16,15 @@ export default class PDFtoMD extends Plugin {
 
 		this.addRibbonIcon(
 			"arrow-right-left",
-			"PDF to Markdown",
+			"PDF2Markdown",
 			(evt: MouseEvent) => {
 				new pdfToMdModal(this.app, this).open();
 			}
 		);
 
 		this.addCommand({
-			id: "pdf-to-md",
-			name: "PDF To Markdown",
+			id: "obsidian-pdf2markdown",
+			name: "PDF2Markdown",
 			callback: () => {
 				new pdfToMdModal(this.app, this).open();
 			},
