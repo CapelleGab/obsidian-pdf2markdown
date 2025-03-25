@@ -1,24 +1,29 @@
 import PDFtoMD from "main";
-import { App, Modal, Notice } from "obsidian";
+import { App, Modal, Notice, TFile } from "obsidian";
 import { buildPDFToMardown } from "src/utils/ocrRequests.utils";
 import { addApiKey } from "./addApiKey.modal";
 
 export class pdfToMdModal extends Modal {
 	private plugin: PDFtoMD;
+	private selectedFile?: File;
 
-	constructor(app: App, plugin: PDFtoMD) {
+	constructor(app: App, plugin: PDFtoMD, selectedFile?: File) {
 		super(app);
 		this.plugin = plugin;
+		this.selectedFile = selectedFile;
 	}
 
 	async onOpen() {
 		const { contentEl } = this;
 
+		// Check if API key is provided, else ask for it
 		if (this.plugin.settings.apiKey === "") {
 			new addApiKey(this.app, this.plugin).open();
 			this.close();
+			return;
 		}
 
+		// Modal Header
 		contentEl.createEl("h2", {
 			text: "PDF To Markdown",
 			cls: "pdf-upload-title",
@@ -30,12 +35,12 @@ export class pdfToMdModal extends Modal {
 			cls: "pdf-input-container",
 		});
 
-		// PDF SELECTOR
+		// PDF Selector
 		const pdfInputLabel = inputContainer.createEl("input", {
 			attr: {
 				type: "text",
 				id: "pdf-upload",
-				placeholder: "Sélectionner un PDF...",
+				placeholder: "Select any PDF...",
 				readonly: "true",
 			},
 			cls: "pdf-upload-input",
@@ -65,7 +70,7 @@ export class pdfToMdModal extends Modal {
 				type: "text",
 				id: "folder-upload",
 				value: this.plugin.settings.defaultFolder,
-				placeholder: "Sélectionnez un dossier",
+				placeholder: "Select destination...",
 				readonly: "true",
 			},
 			cls: "folder-upload-input",
@@ -73,6 +78,13 @@ export class pdfToMdModal extends Modal {
 		destinationFolderInputLabel.addEventListener("click", () => {
 			destinationFolderSelectorInput.click();
 		});
+
+		if (this.selectedFile) {
+			const dataTransfer = new DataTransfer();
+			dataTransfer.items.add(this.selectedFile);
+			pdfSelectorInput.files = dataTransfer.files;
+			pdfInputLabel.value = this.selectedFile.name;
+		}
 
 		pdfSelectorInput.addEventListener("change", (event) => {
 			const file = (event.target as HTMLInputElement).files?.[0];
@@ -118,7 +130,7 @@ export class pdfToMdModal extends Modal {
 
 				jsonContent.pages.forEach((page) => {
 					if (page.markdown) {
-						pageContent += `${page.markdown} `;
+						pageContent += `${page.markdown}`;
 					}
 
 					if (page.images) {
@@ -188,6 +200,11 @@ export class pdfToMdModal extends Modal {
 			}
 
 			await this.app.vault.create(fullPath, content);
+
+			const newFile = this.app.vault.getAbstractFileByPath(fullPath);
+			if (newFile instanceof TFile) {
+				await this.app.workspace.getLeaf().openFile(newFile);
+			}
 		} catch (error) {
 			new Notice(`Erreur lors de la création du fichier Markdown : ${error}`);
 		}
