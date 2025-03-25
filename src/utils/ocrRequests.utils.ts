@@ -4,9 +4,19 @@ import {
 	FileSignedURL,
 	UploadFileOut,
 } from "@mistralai/mistralai/models/components";
-import data from "data.json";
+import * as fs from "fs";
+import path from "path";
 
-const apiKey = data.apiKey;
+const dataJsonPath = path.resolve("../../data.json");
+
+let apiKey = "";
+if (fs.existsSync(dataJsonPath)) {
+	const data = JSON.parse(fs.readFileSync(dataJsonPath, "utf-8"));
+	apiKey = data.apiKey;
+} else {
+	console.warn("data.json doesn't exist");
+}
+
 const client = new Mistral({ apiKey: apiKey });
 
 export const uploadPDFtoMistral = async (file: File) => {
