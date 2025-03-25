@@ -5,9 +5,7 @@ import {
 } from "@mistralai/mistralai/models/components";
 import data from "data.json";
 
-
-
-const apiKey = data.apiKey
+const apiKey = data.apiKey;
 const client = new Mistral({ apiKey: apiKey });
 
 export const uploadPDFtoMistral = async (file: File) => {
