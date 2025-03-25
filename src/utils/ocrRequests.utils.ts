@@ -1,5 +1,6 @@
 import { Mistral } from "@mistralai/mistralai";
 import {
+	FilePurpose,
 	FileSignedURL,
 	UploadFileOut,
 } from "@mistralai/mistralai/models/components";
@@ -14,7 +15,7 @@ export const uploadPDFtoMistral = async (file: File) => {
 			fileName: file.name,
 			content: file,
 		},
-		purpose: "ocr",
+		purpose: "ocr" as FilePurpose,
 	});
 };
 
