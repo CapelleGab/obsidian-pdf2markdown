@@ -1,9 +1,9 @@
 {
-	"id": "pdf-to-md",
-	"name": "PDF to MD",
-	"version": "1.0.0",
+	"id": "pdf2markdown",
+	"name": "PDF2Markdown",
+	"version": "1.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "Convert PDF to Markdown.",
+	"description": "Convert PDF to Markdown by (MISTRAL OCR MODEL)",
 	"author": "CAPELLE Gabin",
 	"authorUrl": "https://github.com/CapelleGab",
 	"fundingUrl": "https://obsidian.md/pricing",
