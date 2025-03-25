@@ -20,6 +20,7 @@
       "ES7"
     ]
   },
+  "exclude": ["data.json"],
   "include": [
     "**/*.ts"
   ]
