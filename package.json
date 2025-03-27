@@ -1,6 +1,6 @@
 {
-	"name": "obsidian-pdf2markdown",
-	"version": "1.0.1",
+	"name": "pdf2markdown-obsidian",
+	"version": "1.0.2",
 	"description": "This is a obsidian plugin for transform a PDF to Markdown",
 	"main": "main.js",
 	"scripts": {

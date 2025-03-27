@@ -1,7 +1,7 @@
 {
-	"id": "pdf2markdown",
+	"id": "pdf2markdown-obsidian",
 	"name": "PDF2Markdown",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "Convert PDF to Markdown by (MISTRAL OCR MODEL)",
 	"author": "CAPELLE Gabin",
