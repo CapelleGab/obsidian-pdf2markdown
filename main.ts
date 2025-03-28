@@ -1,4 +1,4 @@
-import {Menu, MenuItem, Notice, Plugin, TFile} from "obsidian";
+import { Menu, MenuItem, Notice, Plugin, TFile } from "obsidian";
 import {
 	DEFAULT_SETTINGS,
 	PDFtoMDSettings,
@@ -26,7 +26,7 @@ export default class PDFtoMD extends Plugin {
 		// Add command to trigger modal
 		this.addCommand({
 			id: "obsidian-pdf2markdown",
-			name: "PDF2Markdown",
+			name: "Convert PDF To Markdown",
 			callback: () => {
 				new pdfToMdModal(this.app, this).open();
 			},
@@ -40,7 +40,8 @@ export default class PDFtoMD extends Plugin {
 			this.app.workspace.on("file-menu", (menu: Menu, file: TFile) => {
 				if (file.extension === "pdf") {
 					menu.addItem((item: MenuItem) => {
-						item.setTitle("Extract file into a new note")
+						item
+							.setTitle("Extract file into a new note")
 							.setIcon("file-text")
 							.onClick(async () => {
 								const fileBlob = await this.getFileAsBlob(file);
@@ -48,7 +49,9 @@ export default class PDFtoMD extends Plugin {
 									new Notice("Impossible de lire le fichier PDF.");
 									return;
 								}
-								const newFile = new File([fileBlob], file.name, { type: "application/pdf" });
+								const newFile = new File([fileBlob], file.name, {
+									type: "application/pdf",
+								});
 								new pdfToMdModal(this.app, this, newFile).open();
 							});
 					});
@@ -85,11 +88,7 @@ export default class PDFtoMD extends Plugin {
 
 	// Load settings from file
 	async loadSettings() {
-		this.settings = Object.assign(
-			{},
-			DEFAULT_SETTINGS,
-			await this.loadData()
-		);
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	// Save settings to file
