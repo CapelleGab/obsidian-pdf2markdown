@@ -5,14 +5,22 @@ import {
 	PDFtoMDSettingTab,
 } from "src/configs/settings";
 import { pdfToMdModal } from "src/modals/pdfToMD.modal";
+import { FileService } from "./src/services/FileService";
+import { StyleService } from "./src/services/StyleService";
 
 export default class PDFtoMD extends Plugin {
 	settings: PDFtoMDSettings;
+	private styleService: StyleService;
+	private fileService: FileService;
 
 	async onload() {
+		// Initialize services
+		this.styleService = new StyleService(this.app);
+		this.fileService = new FileService(this.app);
+
 		// Load settings and styles
 		await this.loadSettings();
-		this.loadStyles();
+		this.styleService.loadStyles();
 
 		// Add ribbon icon
 		this.addRibbonIcon(
@@ -44,7 +52,7 @@ export default class PDFtoMD extends Plugin {
 							.setTitle("Extract file into a new note")
 							.setIcon("file-text")
 							.onClick(async () => {
-								const fileBlob = await this.getFileAsBlob(file);
+								const fileBlob = await this.fileService.getBlobFromFile(file);
 								if (!fileBlob) {
 									new Notice("Impossible de lire le fichier PDF.");
 									return;
@@ -60,33 +68,6 @@ export default class PDFtoMD extends Plugin {
 		);
 	}
 
-	// Method to convert TFile to Blob
-	async getFileAsBlob(file: TFile): Promise<Blob | null> {
-		try {
-			const data = await this.app.vault.readBinary(file);
-			return new Blob([data], { type: "application/pdf" });
-		} catch (error) {
-			console.error("Erreur lors de la lecture du fichier :", error);
-			return null;
-		}
-	}
-
-	// Load styles for plugin
-	loadStyles() {
-		const link = document.createElement("link");
-		link.rel = "stylesheet";
-		link.href = this.app.vault.adapter.getResourcePath(
-			`${this.manifest.dir}/styles.css`
-		);
-		document.head.appendChild(link);
-	}
-
-	// Unload plugin
-	onunload() {
-		return new Notice("PDF To MD - Unloaded");
-	}
-
-	// Load settings from file
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
@@ -94,5 +75,9 @@ export default class PDFtoMD extends Plugin {
 	// Save settings to file
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	onunload() {
+		return new Notice("PDF To MD - Unloaded");
 	}
 }
