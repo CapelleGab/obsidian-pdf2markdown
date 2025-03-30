@@ -54,17 +54,7 @@ export class pdfToMdModal extends Modal {
 		});
 		pdfInputLabel.addEventListener("click", () => pdfSelectorInput.click());
 
-		// Destination Folder Selector
-		const destinationFolderSelectorInput = inputContainer.createEl("input", {
-			attr: {
-				type: "file",
-				id: "folder-picker",
-				webkitdirectory: "true",
-				multiple: "true",
-				hidden: "true",
-			},
-		});
-
+		// Destination Folder Selector (avec Electron dialog)
 		const destinationFolderInputLabel = inputContainer.createEl("input", {
 			attr: {
 				type: "text",
@@ -75,8 +65,14 @@ export class pdfToMdModal extends Modal {
 			},
 			cls: "folder-upload-input",
 		});
-		destinationFolderInputLabel.addEventListener("click", () => {
-			destinationFolderSelectorInput.click();
+
+		destinationFolderInputLabel.addEventListener("click", async () => {
+			const folderPath = await this.openFolderDialog(
+				this.plugin.settings.defaultFolder
+			);
+			if (folderPath) {
+				destinationFolderInputLabel.value = folderPath;
+			}
 		});
 
 		if (this.selectedFile) {
@@ -90,15 +86,6 @@ export class pdfToMdModal extends Modal {
 			const file = (event.target as HTMLInputElement).files?.[0];
 			if (file) {
 				pdfInputLabel.value = file.name;
-			}
-		});
-
-		destinationFolderSelectorInput.addEventListener("change", (event) => {
-			const files = (event.target as HTMLInputElement).files;
-			if (files && files.length > 0) {
-				const firstFile = files[0].webkitRelativePath;
-				const folderPath = firstFile.split("/")[0];
-				destinationFolderInputLabel.value = `/${folderPath}/`;
 			}
 		});
 
@@ -170,7 +157,7 @@ export class pdfToMdModal extends Modal {
 			.replace(/^\/+/, "");
 
 		const newFolderPath = relativeFolderPath
-			? `${relativeFolderPath}${fileName}`
+			? `${relativeFolderPath}/${fileName}`
 			: fileName;
 
 		if (!(await this.app.vault.adapter.exists(newFolderPath))) {
@@ -217,5 +204,41 @@ export class pdfToMdModal extends Modal {
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+	}
+
+	async openFolderDialog(defaultPath?: string): Promise<string | null> {
+		return new Promise((resolve) => {
+			try {
+				const dialog = window.require("electron").remote.dialog;
+				const vaultPath = this.app.vault.adapter.basePath;
+
+				console.log("Chemin du vault:", vaultPath);
+				console.log("Chemin par défaut:", defaultPath);
+
+				dialog
+					.showOpenDialog({
+						properties: ["openDirectory"],
+						defaultPath: vaultPath,
+						title: "Sélectionner un dossier dans le vault",
+					})
+					.then((result: { canceled: boolean; filePaths: string[] }) => {
+						if (result.canceled) {
+							resolve(null);
+						} else {
+							console.log("Chemin sélectionné:", result.filePaths[0]);
+							resolve(result.filePaths[0]);
+						}
+					})
+					.catch((err: Error) => {
+						console.error("Erreur lors de l'ouverture du dialogue :", err);
+						new Notice("Erreur lors de l'ouverture du sélecteur de dossier");
+						resolve(null);
+					});
+			} catch (err) {
+				console.error("Erreur lors de l'initialisation du dialogue :", err);
+				new Notice("Impossible d'accéder au sélecteur de dossier");
+				resolve(null);
+			}
+		});
 	}
 }
