@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@mistralai/mistralai": "^1.5.1",
+		"electron": "^35.1.2",
 		"fs": "^0.0.1-security"
 	}
 }
