@@ -1,6 +1,6 @@
 import PDFtoMD from "main";
 import { App, Modal, Notice, TFile } from "obsidian";
-import { buildPDFToMardown } from "src/utils/ocrRequests.utils";
+import { buildPDFToMardown } from "src/api/mistral";
 import { addApiKey } from "./addApiKey.modal";
 
 export class pdfToMdModal extends Modal {
