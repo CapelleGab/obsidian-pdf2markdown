@@ -131,14 +131,19 @@ export class pdfToMdModal extends Modal {
 
 				await this.createMarkdownFile(pageContent, file, folderPath, images);
 
-				new Notice("Conversion réussie !");
+				if (this.plugin.settings.showNotice) {
+					new Notice("Conversion réussie !");
+				}
 				this.close();
 			} catch (error) {
-				new Notice(
-					`La conversion a échoué. Détails de l'erreur : ${
-						error instanceof Error ? error.message : error
-					}`
-				);
+				if (this.plugin.settings.showNotice) {
+					new Notice(
+						`La conversion a échoué. Détails de l'erreur : ${
+							error instanceof Error ? error.message : error
+						}`
+					);
+				}
+				return;
 			}
 		});
 	}
@@ -164,7 +169,9 @@ export class pdfToMdModal extends Modal {
 			try {
 				await this.app.vault.createFolder(newFolderPath);
 			} catch (error) {
-				new Notice(`Erreur lors de la création du dossier : ${error}`);
+				if (this.plugin.settings.showNotice) {
+					new Notice(`Erreur lors de la création du dossier : ${error}`);
+				}
 				return;
 			}
 		}
@@ -181,7 +188,9 @@ export class pdfToMdModal extends Modal {
 						const imageBuffer = Buffer.from(base64Data, "base64");
 						await this.app.vault.adapter.writeBinary(imagePath, imageBuffer);
 					} catch (error) {
-						new Notice(`Erreur lors de la création de l'image : ${error}`);
+						if (this.plugin.settings.showNotice) {
+							new Notice(`Erreur lors de la création de l'image : ${error}`);
+						}
 					}
 				}
 			}
@@ -193,7 +202,9 @@ export class pdfToMdModal extends Modal {
 				await this.app.workspace.getLeaf().openFile(newFile);
 			}
 		} catch (error) {
-			new Notice(`Erreur lors de la création du fichier Markdown : ${error}`);
+			if (this.plugin.settings.showNotice) {
+				new Notice(`Erreur lors de la création du fichier Markdown : ${error}`);
+			}
 		}
 	}
 
@@ -212,8 +223,6 @@ export class pdfToMdModal extends Modal {
 				const dialog = window.require("electron").remote.dialog;
 				const vaultPath = this.app.vault.adapter.basePath;
 
-				console.log("Chemin du vault:", vaultPath);
-				console.log("Chemin par défaut:", defaultPath);
 
 				dialog
 					.showOpenDialog({
@@ -230,13 +239,15 @@ export class pdfToMdModal extends Modal {
 						}
 					})
 					.catch((err: Error) => {
-						console.error("Erreur lors de l'ouverture du dialogue :", err);
-						new Notice("Erreur lors de l'ouverture du sélecteur de dossier");
+						if (this.plugin.settings.showNotice) {
+							new Notice("Erreur lors de l'ouverture du sélecteur de dossier");
+						}
 						resolve(null);
 					});
 			} catch (err) {
-				console.error("Erreur lors de l'initialisation du dialogue :", err);
-				new Notice("Impossible d'accéder au sélecteur de dossier");
+				if (this.plugin.settings.showNotice) {
+					new Notice("Impossible d'accéder au sélecteur de dossier");
+				}
 				resolve(null);
 			}
 		});

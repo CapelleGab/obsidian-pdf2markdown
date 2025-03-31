@@ -4,11 +4,13 @@ import PDFtoMD from "../../main";
 export interface PDFtoMDSettings {
 	defaultFolder: string;
 	apiKey: string;
+	showNotice: boolean;
 }
 
 export const DEFAULT_SETTINGS: PDFtoMDSettings = {
 	defaultFolder: "/Conversions/",
 	apiKey: "",
+	showNotice: true,
 };
 
 export class PDFtoMDSettingTab extends PluginSettingTab {
@@ -41,10 +43,23 @@ export class PDFtoMDSettingTab extends PluginSettingTab {
 			.setName("Mistral API KEY")
 			.setDesc("Go to Mistral LA PLATFORME to get you're API KEY")
 			.addText((text) => {
-				text.setPlaceholder("API KEY")
+				text
+					.setPlaceholder("API KEY")
 					.setValue(this.plugin.settings.apiKey)
 					.onChange(async (value) => {
 						this.plugin.settings.apiKey = value;
+						await this.plugin.saveSettings();
+					});
+			});
+
+		new Setting(containerEl)
+			.setName("Toggle Notice")
+			.setDesc("Toggle all notice plugin")
+			.addToggle((toggle) => {
+				toggle
+					.setValue(this.plugin.settings.showNotice)
+					.onChange(async (value) => {
+						this.plugin.settings.showNotice = value;
 						await this.plugin.saveSettings();
 					});
 			});
