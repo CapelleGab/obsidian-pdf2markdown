@@ -48,24 +48,36 @@ export default class PDFtoMD extends Plugin {
 		this.addSettingTab(new PDFtoMDSettingTab(this.app, this));
 
 		// Register right-click menu for PDF files
+
 		this.registerEvent(
 			this.app.workspace.on("file-menu", (menu: Menu, file: TFile) => {
 				if (file.extension === "pdf") {
 					menu.addItem((item: MenuItem) => {
-						item
-							.setTitle("Extract file into a new note")
-							.setIcon("file-text")
-							.onClick(async () => {
-								const fileBlob = await this.fileService.getBlobFromFile(file);
-								if (!fileBlob) {
-									new Notice("Impossible de lire le fichier PDF.");
-									return;
-								}
-								const newFile = new File([fileBlob], file.name, {
-									type: "application/pdf",
+						item.setTitle("PDF2Markdown");
+						const submenu = item.setSubmenu();
+
+						submenu.addItem((item) => {
+							item
+								.setTitle("📄 Extract file into a new note")
+								.onClick(async () => {
+									const fileBlob = await this.fileService.getBlobFromFile(file);
+									if (!fileBlob) {
+										new Notice("Impossible de lire le fichier PDF.");
+										return;
+									}
+									const newFile = new File([fileBlob], file.name, {
+										type: "application/pdf",
+									});
+									new pdfToMdModal(this.app, this, newFile).open();
 								});
-								new pdfToMdModal(this.app, this, newFile).open();
-							});
+						});
+						submenu.addItem((item) => {
+							item
+								.setTitle("⚡️ Extract fast in default folder")
+								.onClick(async () => {
+									// Handle the case where you extract directly without going through the modal
+								});
+						});
 					});
 				}
 			})
