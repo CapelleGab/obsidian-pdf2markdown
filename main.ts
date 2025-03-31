@@ -1,10 +1,9 @@
 import { Menu, MenuItem, Notice, Plugin, TFile } from "obsidian";
-import {
-	DEFAULT_SETTINGS,
-	PDFtoMDSettings,
-	PDFtoMDSettingTab,
-} from "src/configs/settings";
+import { PDFtoMDSettings, PDFtoMDSettingTab } from "src/configs/settings";
+// Modal
 import { pdfToMdModal } from "src/modals/pdfToMD.modal";
+// Services
+import { ConfigService } from "./src/services/ConfigService";
 import { FileService } from "./src/services/FileService";
 import { StyleService } from "./src/services/StyleService";
 
@@ -12,14 +11,16 @@ export default class PDFtoMD extends Plugin {
 	settings: PDFtoMDSettings;
 	private styleService: StyleService;
 	private fileService: FileService;
+	private configService: ConfigService;
 
 	async onload() {
 		// Initialize services
 		this.styleService = new StyleService(this.app);
 		this.fileService = new FileService(this.app);
+		this.configService = new ConfigService(this.app, this);
 
-		// Load settings and styles
-		await this.loadSettings();
+		await this.configService.loadSettings();
+		this.settings = this.configService.getSettings();
 		this.styleService.loadStyles();
 
 		// Add ribbon icon
@@ -69,12 +70,12 @@ export default class PDFtoMD extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		await this.configService.loadSettings();
+		this.settings = this.configService.getSettings();
 	}
 
-	// Save settings to file
 	async saveSettings() {
-		await this.saveData(this.settings);
+		await this.configService.saveSettings();
 	}
 
 	onunload() {
