@@ -155,29 +155,24 @@ export class pdfToMdModal extends Modal {
 		images: string[]
 	) {
 		const fileName = file.name.replace(/\.pdf$/, "");
-		const markdownFileName = `${fileName}.md`;
 		const vaultRoot = this.app.vault.adapter.basePath;
-		const relativeFolderPath = folderPath
-			.replace(vaultRoot, "")
-			.replace(/^\/+/, "");
-
+		const relativeFolderPath = folderPath.replace(vaultRoot, "").replace(/^\/+/, "");
 		const newFolderPath = relativeFolderPath
-			? `${relativeFolderPath}/${fileName}`
-			: fileName;
+			? `${relativeFolderPath}/${fileName}`.replace(/\/+/g, "/").trim()
+			: fileName.trim();
 
-		if (!(await this.app.vault.adapter.exists(newFolderPath))) {
-			try {
-				await this.app.vault.createFolder(newFolderPath);
-			} catch (error) {
-				if (this.plugin.settings.showNotice) {
-					new Notice(`Erreur lors de la création du dossier : ${error}`);
-				}
-				return;
-			}
-		}
-
-		const fullPath = `${newFolderPath}/${markdownFileName}`;
 		try {
+			const folderExists = await this.app.vault.adapter.exists(newFolderPath);
+
+			if (!folderExists) {
+				if (newFolderPath && newFolderPath !== "/") {
+					await this.app.vault.createFolder(newFolderPath);
+				}
+			}
+
+			const markdownFileName = `${fileName}.md`;
+			const fullPath = `${newFolderPath}/${markdownFileName}`.replace(/\/+/g,"/");
+
 			if (images && images.length > 0) {
 				for (let i = 0; i < images.length; i++) {
 					const image = images[i];
@@ -202,9 +197,11 @@ export class pdfToMdModal extends Modal {
 				await this.app.workspace.getLeaf().openFile(newFile);
 			}
 		} catch (error) {
+			console.error("Erreur détaillée:", error);
 			if (this.plugin.settings.showNotice) {
-				new Notice(`Erreur lors de la création du fichier Markdown : ${error}`);
+				new Notice(`Erreur lors de la création du fichier : ${error}`);
 			}
+			throw error;
 		}
 	}
 
@@ -222,7 +219,6 @@ export class pdfToMdModal extends Modal {
 			try {
 				const dialog = window.require("electron").remote.dialog;
 				const vaultPath = this.app.vault.adapter.basePath;
-
 
 				dialog
 					.showOpenDialog({
