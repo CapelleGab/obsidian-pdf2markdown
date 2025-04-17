@@ -6,5 +6,5 @@
 	"description": "Convert PDF to Markdown by (MISTRAL OCR MODEL)",
 	"author": "CAPELLE Gabin",
 	"authorUrl": "https://github.com/CapelleGab",
-	"isDesktopOnly": false
+	"isDesktopOnly": true
 }
