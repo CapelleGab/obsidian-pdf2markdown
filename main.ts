@@ -5,24 +5,19 @@ import { pdfToMdModal } from "src/modals/pdfToMD.modal";
 // Services
 import { ConfigService } from "./src/services/ConfigService";
 import { FileService } from "./src/services/FileService";
-import { StyleService } from "./src/services/StyleService";
 
 export default class PDFtoMD extends Plugin {
 	settings: PDFtoMDSettings;
-	private styleService: StyleService;
 	private fileService: FileService;
 	private configService: ConfigService;
 
 	async onload() {
 		// Initialize services
-		this.styleService = new StyleService(this.app);
 		this.fileService = new FileService(this.app);
 		this.configService = new ConfigService(this.app, this);
 
 		await this.configService.loadSettings();
 		this.settings = this.configService.getSettings();
-		this.styleService.loadStyles();
-
 		// Add ribbon icon
 		this.addRibbonIcon(
 			"arrow-right-left",
@@ -89,7 +84,5 @@ export default class PDFtoMD extends Plugin {
 		await this.configService.saveSettings();
 	}
 
-	onunload() {
-		return;
-	}
+	onunload() {}
 }
