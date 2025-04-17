@@ -26,7 +26,7 @@ export class PDFtoMDSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 		new Setting(containerEl)
-			.setName("Default conversion folder")
+			.setName("Default conversion folder").setHeading()
 			.setDesc(
 				"Select the folder where converted Markdown files will be saved."
 			)
@@ -40,7 +40,7 @@ export class PDFtoMDSettingTab extends PluginSettingTab {
 					})
 			);
 		new Setting(containerEl)
-			.setName("Mistral API KEY")
+			.setName("Mistral API KEY").setHeading()
 			.setDesc("Go to Mistral LA PLATFORME to get you're API KEY")
 			.addText((text) => {
 				text
@@ -53,7 +53,7 @@ export class PDFtoMDSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName("Toggle Notice")
+			.setName("Toggle Notice").setHeading()
 			.setDesc("Toggle all notice plugin")
 			.addToggle((toggle) => {
 				toggle

@@ -35,7 +35,7 @@ export default class PDFtoMD extends Plugin {
 		// Add command to trigger modal
 		this.addCommand({
 			id: "obsidian-pdf2markdown",
-			name: "Convert PDF To Markdown",
+			name: "Convert PDF to MD",
 			callback: () => {
 				new pdfToMdModal(this.app, this).open();
 			},
@@ -45,7 +45,6 @@ export default class PDFtoMD extends Plugin {
 		this.addSettingTab(new PDFtoMDSettingTab(this.app, this));
 
 		// Register right-click menu for PDF files
-
 		this.registerEvent(
 			this.app.workspace.on("file-menu", (menu: Menu, file: TFile) => {
 				if (file.extension === "pdf") {
@@ -59,7 +58,7 @@ export default class PDFtoMD extends Plugin {
 								.onClick(async () => {
 									const fileBlob = await this.fileService.getBlobFromFile(file);
 									if (!fileBlob) {
-										new Notice("Impossible de lire le fichier PDF.");
+										new Notice("Cannot read PDF file.");
 										return;
 									}
 									const newFile = new File([fileBlob], file.name, {
