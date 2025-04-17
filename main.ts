@@ -23,9 +23,6 @@ export default class PDFtoMD extends Plugin {
 		this.settings = this.configService.getSettings();
 		this.styleService.loadStyles();
 
-		if (this.settings.showNotice) {
-			new Notice("PDF To MD - Loaded");
-		}
 		// Add ribbon icon
 		this.addRibbonIcon(
 			"arrow-right-left",
@@ -94,9 +91,6 @@ export default class PDFtoMD extends Plugin {
 	}
 
 	onunload() {
-		if (this.settings.showNotice) {
-			return new Notice("PDF To MD - Unloaded");
-		}
 		return;
 	}
 }
