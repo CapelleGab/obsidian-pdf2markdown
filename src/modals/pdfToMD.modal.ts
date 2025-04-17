@@ -110,8 +110,6 @@ export class pdfToMdModal extends Modal {
 			try {
 				const jsonContent = await this.getJSON(file);
 
-				console.log("JSON CONTENT GOOD");
-
 				let pageContent = "";
 				const images: string[] = [];
 
